@@ -3,8 +3,8 @@ import { Navigate, BrowserRouter as Router, Routes, Route } from 'react-router-d
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
-import CandidateForm from "./CandidateForm";
-import CandidateList from "./CandidateList";
+import CandidateForm from "./components/CandidateForm";
+import CandidateList from "./components/CandidateList";
 
 const PrivateRoute = ({ element }) => {
   const token = localStorage.getItem("token");
