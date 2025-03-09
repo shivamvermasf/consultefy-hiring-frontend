@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { TextField, Button, Container, Typography, Grid, Paper } from "@mui/material";
+import { useNavigate } from "react-router-dom"; // Updated for React Router v6
 import axios from "axios";
 import ResumeUpload from "./ResumeUpload";
+import config from "../config"; // Import the config file
 
 const CandidateForm = () => {
   const [candidate, setCandidate] = useState({
@@ -18,6 +20,8 @@ const CandidateForm = () => {
   const [loading, setLoading] = useState(false); // Loading state for submission
   const [error, setError] = useState(""); // Error message handling
 
+  const navigate = useNavigate(); // Updated to useNavigate
+
   // Handle Input Changes
   const handleChange = (e) => {
     setCandidate({ ...candidate, [e.target.name]: e.target.value });
@@ -29,25 +33,36 @@ const CandidateForm = () => {
     setLoading(true);
     setError("");
 
+    const token = localStorage.getItem("token"); // ✅ Get token from localStorage
+
+    if (!token) {
+      setError("❌ No token found. Please log in again.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await axios.post("http://ec2-13-48-43-6.eu-north-1.compute.amazonaws.com:5001/api/candidates", {
-        ...candidate,
-        skills: candidate.skills.split(",").map((skill) => skill.trim()), // Convert skills to array
-        resume_link: resumeLink,
-      });
+      const res = await axios.post(
+        `${config.API_BASE_URL}/candidates`,
+        {
+          ...candidate,
+          skills: candidate.skills.split(",").map((skill) => skill.trim()), // Convert skills to array
+          resume_link: resumeLink,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // ✅ Include token in headers
+          },
+        }
+      );
 
       alert("✅ Candidate added successfully!");
-      setCandidate({
-        name: "",
-        email: "",
-        phone: "",
-        linkedin: "",
-        skills: "",
-        experience: "",
-        expected_salary: "",
-      });
-      setResumeLink("");
+
+      // Redirect to the new candidate's details page using navigate
+      navigate(`/candidates/${res.data.id}`);
     } catch (err) {
+      console.error("Error:", err.response?.data || err.message);
       setError("❌ Failed to add candidate. Please try again.");
     } finally {
       setLoading(false);

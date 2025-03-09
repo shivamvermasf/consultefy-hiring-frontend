@@ -5,6 +5,9 @@ import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import CandidateForm from "./components/CandidateForm";
 import CandidateList from "./components/CandidateList";
+import CandidateDetails from "./components/CandidateDetails";
+import EditCandidate from "./components/EditCandidate";
+import CandidatePage from "./components/CandidatePage";
 
 const PrivateRoute = ({ element }) => {
   const token = localStorage.getItem("token");
@@ -18,6 +21,10 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<PrivateRoute element={<Dashboard />} />} />
+        <Route path="/add-candidate" element={<PrivateRoute element={<CandidateForm />} />} />  {/* ✅ Add Route */}
+        <Route path="/candidates" element={<PrivateRoute element={<CandidateList />} />} />  {/* ✅ Add Route */}
+        <Route path="/edit-candidate/:id" element={<EditCandidate />} />
+        <Route path="/candidates/:id" element={<CandidatePage />} />
       </Routes>
     </Router>
   );

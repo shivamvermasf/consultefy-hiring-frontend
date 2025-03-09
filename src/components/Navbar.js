@@ -6,10 +6,9 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Clear authentication tokens if stored
     localStorage.removeItem("token"); 
     sessionStorage.removeItem("token"); 
-    navigate("/login"); // Redirect to login page
+    navigate("/login"); 
   };
 
   return (
@@ -17,14 +16,11 @@ const Navbar = () => {
       <Toolbar>
         {/* Left-aligned navigation links */}
         <Box sx={{ display: "flex", gap: 2 }}>
-          <Button color="inherit" component={Link} to="/">
+          <Button sx={{ color: "white" }} component={Link} to="/">
             Dashboard
           </Button>
-          <Button color="inherit" component={Link} to="/add-candidate">
-            Add Candidate
-          </Button>
-          <Button color="inherit" component={Link} to="/candidates">
-            Candidate List
+          <Button sx={{ color: "white" }} component={Link} to="/candidates">
+            Candidates
           </Button>
         </Box>
 
@@ -32,7 +28,7 @@ const Navbar = () => {
         <Box sx={{ flexGrow: 1 }} />
 
         {/* Logout button on the right */}
-        <Button color="inherit" onClick={handleLogout}>
+        <Button sx={{ color: "white" }} onClick={handleLogout}>
           Logout
         </Button>
       </Toolbar>
