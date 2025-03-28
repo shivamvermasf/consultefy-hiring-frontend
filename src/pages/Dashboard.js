@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { getCandidates, getJobs, getPayments } from "../services/api";
+import { getCandidates, getopportunity, getPayments } from "../services/api";
 import { Container, Typography, Card, CardContent, Grid, Button } from "@mui/material";
 
 const Dashboard = () => {
     const [candidates, setCandidates] = useState([]);
-    const [jobs, setJobs] = useState([]);
+    const [opportunity, setopportunity] = useState([]);
     const [payments, setPayments] = useState([]);
 
     useEffect(() => {
         getCandidates().then((res) => setCandidates(res.data));
-        getJobs().then((res) => setJobs(res.data));
+        getopportunity().then((res) => setopportunity(res.data));
         getPayments().then((res) => setPayments(res.data));
     }, []);
 
@@ -34,13 +34,13 @@ const Dashboard = () => {
                 <Grid item xs={12} md={4}>
                     <Card>
                         <CardContent>
-                            <Typography variant="h6">Jobs</Typography>
-                            {jobs.map((j) => (
+                            <Typography variant="h6">opportunity</Typography>
+                            {opportunity.map((j) => (
                                 <Typography key={j.id}>
                                     {j.title} at {j.company}
                                 </Typography>
                             ))}
-                            <Button variant="contained" color="secondary">View Jobs</Button>
+                            <Button variant="contained" color="secondary">View opportunity</Button>
                         </CardContent>
                     </Card>
                 </Grid>

@@ -1,0 +1,19 @@
+.quill-editor-container {
+    min-height: 200px; /* Default height */
+    max-height: none; /* Allow unlimited height */
+    resize: vertical; /* Allow vertical resizing */
+    overflow: auto; /* Ensure content is scrollable */
+    border: 1px solid #ccc; /* Optional: Border to make it clearer */
+  }
+  
+  .ql-container {
+    min-height: 200px !important;
+    max-height: none !important;
+  }
+  
+  .ql-editor {
+    min-height: 200px;
+    max-height: none;
+    overflow-y: auto; /* Enable scrolling if needed */
+  }
+  

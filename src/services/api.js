@@ -15,9 +15,9 @@ export const getCandidates = async () => {
     return await axios.get(`${API_BASE_URL}/candidates`, { headers: getAuthHeader() });
 };
 
-// Fetch jobs
-export const getJobs = async () => {
-    return await axios.get(`${API_BASE_URL}/jobs`, { headers: getAuthHeader() });
+// Fetch opportunity
+export const getopportunity = async () => {
+    return await axios.get(`${API_BASE_URL}/opportunity`, { headers: getAuthHeader() });
 };
 
 // Fetch payments
