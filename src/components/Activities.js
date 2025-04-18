@@ -99,6 +99,12 @@ const Activities = ({ parentType, parentId }) => {
         <Button variant="contained" onClick={handleOpenEventForm}>New Event</Button>
       </Stack>
 
+      <Stack direction="row" spacing={2} sx={{ mb: 2}}>
+        <Button variant="outlined" onClick={fetchActivities}>Refresh</Button>
+        <Button variant="outlined" >Expand All</Button>
+        <Button variant="outlined" >View All</Button>
+      </Stack>
+
       {/* Filter Bar */}
       <ActivityFilterBar
         timeFilter={timeFilter}

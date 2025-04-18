@@ -11,84 +11,75 @@ import {
   Typography,
   CircularProgress,
   Button,
-  Paper
+  Paper,
 } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
 import axios from "axios";
 import config from "../config";
 import CandidateDetails from "./CandidateDetails";
 import ResumePreview from "./ResumePreview";
 import Activities from "./Activities";
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 const CandidatePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [candidate, setCandidate] = useState(null);
-  const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [leftTab, setLeftTab] = useState(0);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [activeJob, setActiveJob] = useState(null);
+
+  useEffect(() => {
+    fetchCandidateData();
+  }, [id]);
+
+  const fetchCandidateData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${config.API_BASE_URL}/candidates/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCandidate(response.data);
+
+      // Fetch active job for this candidate if exists
+      const jobsResponse = await axios.get(`${config.API_BASE_URL}/jobs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const activeJob = jobsResponse.data.find(
+        job => job.candidate_id === parseInt(id) && job.status === 'active'
+      );
+      setActiveJob(activeJob);
+
+      if (response.data.resume_url) {
+        setPdfUrl(response.data.resume_url);
+      }
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch candidate data");
+      setLoading(false);
+    }
+  };
 
   const handleTabChange = (event, newValue) => {
     setLeftTab(newValue);
   };
 
-  const fetchCandidateDetail = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("No token found. Please log in again.");
-      setLoading(false);
-      return;
-    }
-    try {
-      const response = await axios.get(`${config.API_BASE_URL}/candidates/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log("Fetched candidate:", response.data); // Debug log
-      setCandidate(response.data);
-      if (response.data.resume_link) {
-        try {
-          const parsed = JSON.parse(response.data.resume_link);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setPdfUrl(parsed[0]);
-          }
-        } catch (e) {
-          console.error("Error parsing resume_link", e);
-        }
-      }
-      setLoading(false);
-    } catch (err) {
-      setError("Failed to fetch candidate details.");
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCandidateDetail();
-  }, [id]);
-
   if (loading) {
     return (
-      <Container maxWidth="xl" sx={{ mt: 2 }}>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
         <CircularProgress />
-        <Typography>Loading candidate data...</Typography>
-      </Container>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <Container maxWidth="xl" sx={{ mt: 2 }}>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
         <Typography color="error">{error}</Typography>
-      </Container>
-    );
-  }
-
-  if (!candidate) {
-    return (
-      <Container maxWidth="xl" sx={{ mt: 2 }}>
-        <Typography>Candidate not found.</Typography>
-      </Container>
+      </Box>
     );
   }
 
@@ -102,63 +93,102 @@ const CandidatePage = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              backgroundColor: "lightgray",
-              p: 1,
+              p: 2,
             }}
           >
-            <Typography variant="h5">{candidate.name}</Typography>
-            <Button
-              variant="outlined"
-              onClick={() => navigate(`/edit-candidate/${candidate.id}`)}
-            >
-              Edit/Update Candidate
-            </Button>
+            <Typography variant="h5">
+              {candidate.name}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              {activeJob && (
+                <Button
+                  startIcon={<AttachMoneyIcon />}
+                  onClick={() => navigate(`/jobs/${activeJob.id}/finance`)}
+                  sx={{ 
+                    color: '#1976d2',
+                    backgroundColor: 'transparent',
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                    },
+                    textTransform: 'uppercase',
+                    fontSize: '0.875rem',
+                    padding: '4px 8px',
+                  }}
+                >
+                  View Financials
+                </Button>
+              )}
+              <Button
+                startIcon={<EditIcon />}
+                onClick={() => navigate(`/edit-candidate/${id}`)}
+                sx={{ 
+                  color: '#1976d2',
+                  backgroundColor: 'transparent',
+                  '&:hover': {
+                    backgroundColor: 'transparent',
+                  },
+                  textTransform: 'uppercase',
+                  fontSize: '0.875rem',
+                  padding: '4px 8px',
+                }}
+              >
+                Edit/Update Candidate
+              </Button>
+            </Box>
           </Box>
+
           {/* Additional header details row */}
-          <Grid container spacing={1} sx={{ mt: 1 }}>
-            <Grid item xs={6} sm={4} md={2}>
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            <Grid item xs={6} sm={3}>
               <Typography variant="body2" color="textSecondary">Title</Typography>
               <Typography variant="body1">Director of Vendor Relations</Typography>
             </Grid>
-            <Grid item xs={6} sm={4} md={2}>
+            <Grid item xs={6} sm={3}>
               <Typography variant="body2" color="textSecondary">Company</Typography>
               <Typography variant="body1">Farmers Coop. of Florida</Typography>
             </Grid>
-            <Grid item xs={6} sm={4} md={2}>
+            <Grid item xs={6} sm={3}>
               <Typography variant="body2" color="textSecondary">Phone</Typography>
               <Typography variant="body1">{candidate.phone}</Typography>
             </Grid>
-            <Grid item xs={6} sm={4} md={2}>
+            <Grid item xs={6} sm={3}>
               <Typography variant="body2" color="textSecondary">Email</Typography>
-              <Typography variant="body1">{candidate.email}</Typography>
+              <Typography variant="body1" sx={{ wordBreak: 'break-word' }}>{candidate.email}</Typography>
             </Grid>
           </Grid>
         </CardContent>
       </Card>
 
-      {/* Main Two-Column Layout */}
+      {/* Main Content Layout */}
       <Grid container spacing={2}>
-        {/* Left Column: Tabs for Details and Resume */}
-        <Grid item xs={12} md={8}>
-          <Card variant="outlined">
+        {/* Left Column: Details and Resume */}
+        <Grid item xs={12} lg={8}>
+          <Card variant="outlined" sx={{ height: '100%' }}>
             <CardContent>
-              <Tabs value={leftTab} onChange={handleTabChange}>
-                <Tab label="Details" />
-                <Tab label="Resume" />
-              </Tabs>
-              <Box sx={{ mt: 2 }}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                <Tabs value={leftTab} onChange={handleTabChange}>
+                  <Tab label="Details" />
+                  <Tab label="Resume" />
+                </Tabs>
+              </Box>
+              <Box sx={{ minHeight: 'calc(100vh - 400px)', overflow: 'auto' }}>
                 {leftTab === 0 && <CandidateDetails candidate={candidate} />}
                 {leftTab === 1 && <ResumePreview pdfUrl={pdfUrl} />}
               </Box>
             </CardContent>
           </Card>
         </Grid>
-        {/* Right Column: Activities (Timeline) */}
-        <Grid item xs={12} md={4}>
-          <Card variant="outlined">
+
+        {/* Right Column: Activities */}
+        <Grid item xs={12} lg={4}>
+          <Card variant="outlined" sx={{ height: '100%' }}>
             <CardContent>
-              <Typography variant="h6" gutterBottom>Activities</Typography>
-              <Activities parentType="Candidate" parentId={candidate.id} />
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                Activities
+              </Typography>
+              <Box sx={{ minHeight: 'calc(100vh - 400px)', overflow: 'auto' }}>
+                <Activities parentType="Candidate" parentId={id} />
+              </Box>
             </CardContent>
           </Card>
         </Grid>

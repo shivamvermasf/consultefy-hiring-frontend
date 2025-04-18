@@ -10,12 +10,23 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Button
+  Button,
+  Chip,
+  Stack,
+  Card,
+  CardContent,
+  Divider,
+  IconButton,
+  Tooltip,
+  LinearProgress
 } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import BuildIcon from "@mui/icons-material/Build";
+import AddIcon from "@mui/icons-material/Add";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../config";
@@ -27,25 +38,28 @@ const CandidateList = () => {
   const navigate = useNavigate();
 
   // Fetch candidate data from the backend
-  useEffect(() => {
+  const fetchCandidates = async () => {
+    setLoading(true);
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No token found. Please log in again.");
       setLoading(false);
       return;
     }
-    axios
-      .get(`${config.API_BASE_URL}/candidates`, {
+    try {
+      const response = await axios.get(`${config.API_BASE_URL}/candidates`, {
         headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        setCandidates(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("Error fetching candidates.");
-        setLoading(false);
       });
+      setCandidates(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError("Error fetching candidates.");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCandidates();
   }, []);
 
   // Calculate total candidates and count by skills
@@ -70,7 +84,10 @@ const CandidateList = () => {
   });
 
   // Handler for clicking on a candidate row
-  const handleRowClick = (id) => {
+  const handleRowClick = (id, event) => {
+    if (event.target.closest('.MuiChip-root')) {
+      return;
+    }
     navigate(`/candidates/${id}`);
   };
 
@@ -79,70 +96,131 @@ const CandidateList = () => {
     navigate("/add-candidate");
   };
 
+  // Function to parse and normalize skills
+  const parseSkills = (skills) => {
+    if (typeof skills === "string") {
+      try {
+        return JSON.parse(skills);
+      } catch (e) {
+        return skills.split(",").map((s) => s.trim());
+      }
+    }
+    return Array.isArray(skills) ? skills : [];
+  };
+
   return (
     <Box
       sx={{
-        // Constrain the width so there's guaranteed margin on wide screens
         maxWidth: 1500,
-        // Center the box horizontally
         margin: "0 auto",
-        // Add top/bottom padding
         py: 2,
-        // Some horizontal padding so content isn't flush against the edges
         px: 2,
       }}
     >
       {/* Header Section */}
-      <Paper
-        sx={{
-          p: 2,
-          mb: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+      <Card 
+        variant="outlined" 
+        sx={{ 
+          mb: 3, 
+          bgcolor: '#f8f9fa',
+          boxShadow: '0px 2px 4px rgba(0,0,0,0.1)'
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <PeopleIcon color="primary" fontSize="large" />
+        <CardContent>
+          <Stack 
+            direction={{ xs: 'column', sm: 'row' }} 
+            spacing={3} 
+            alignItems={{ xs: 'start', sm: 'center' }}
+            sx={{ mb: 2 }}
+          >
+            <Box flex={1} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box>
+                <Typography variant="h5" fontWeight="bold" color="text.primary">
+                  Candidate Overview
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary">
+                  Total Candidates: {totalCandidates}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddIcon />}
+                  onClick={handleAddCandidate}
+                  sx={{ 
+                    padding: '6px 12px',
+                    '& .MuiButton-startIcon': {
+                      margin: '0 4px 0 0'
+                    }
+                  }}
+                >
+                  Add Candidate
+                </Button>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Tooltip title="Refresh list">
+                <IconButton 
+                  onClick={fetchCandidates}
+                  size="small"
+                >
+                  <RefreshIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Filter list">
+                <IconButton 
+                  size="small"
+                >
+                  <FilterListIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Stack>
+
+          <Divider sx={{ my: 2 }} />
+
           <Box>
-            <Typography variant="h6" sx={{ m: 0 }}>
-              Candidate List
+            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+              Top Skills
             </Typography>
-            <Typography variant="body2" sx={{ m: 0 }}>
-              Total Candidates: {totalCandidates}
-            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1 }}>
+              {Object.entries(skillsCount)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 5)
+                .map(([skill, count]) => (
+                  <Chip
+                    key={skill}
+                    label={`${skill} (${count})`}
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                  />
+                ))}
+            </Stack>
           </Box>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Box>
-            <Typography variant="body2" sx={{ m: 0 }}>
-              <BuildIcon fontSize="small" sx={{ verticalAlign: "middle", mr: 0.5 }} />
-              {Object.entries(skillsCount).map(([skill, count]) => (
-                <span key={skill} style={{ marginRight: 8 }}>
-                  {skill}: {count}
-                </span>
-              ))}
-            </Typography>
-          </Box>
-          <Button variant="contained" onClick={handleAddCandidate}>
-            Add Candidate
-          </Button>
-        </Box>
-      </Paper>
+        </CardContent>
+      </Card>
 
       {loading ? (
-        <Typography>Loading candidates...</Typography>
+        <Box sx={{ width: '100%' }}>
+          <LinearProgress />
+        </Box>
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
-        <TableContainer component={Paper}>
+        <TableContainer 
+          component={Paper} 
+          variant="outlined"
+          sx={{ boxShadow: '0px 2px 4px rgba(0,0,0,0.1)' }}
+        >
           <Table>
-            <TableHead>
+            <TableHead sx={{ bgcolor: '#f8f9fa' }}>
               <TableRow>
-                <TableCell><strong>Name</strong></TableCell>
-                <TableCell><strong>Email</strong></TableCell>
-                <TableCell><strong>Phone</strong></TableCell>
-                <TableCell><strong>Skills</strong></TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Skills</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -150,22 +228,44 @@ const CandidateList = () => {
                 <TableRow
                   key={candidate.id}
                   hover
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => handleRowClick(candidate.id)}
+                  sx={{ 
+                    cursor: "pointer",
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                    }
+                  }}
+                  onClick={(e) => handleRowClick(candidate.id, e)}
                 >
                   <TableCell>{candidate.name}</TableCell>
                   <TableCell>
-                    <EmailIcon fontSize="small" sx={{ verticalAlign: "middle", mr: 0.5 }} />
-                    {candidate.email}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <EmailIcon fontSize="small" color="action" />
+                      {candidate.email}
+                    </Box>
                   </TableCell>
                   <TableCell>
-                    <PhoneIcon fontSize="small" sx={{ verticalAlign: "middle", mr: 0.5 }} />
-                    {candidate.phone}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <PhoneIcon fontSize="small" color="action" />
+                      {candidate.phone}
+                    </Box>
                   </TableCell>
                   <TableCell>
-                    {Array.isArray(candidate.skills)
-                      ? candidate.skills.join(", ")
-                      : candidate.skills}
+                    <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1 }}>
+                      {parseSkills(candidate.skills).map((skill, index) => (
+                        <Chip
+                          key={index}
+                          label={skill}
+                          size="small"
+                          sx={{
+                            backgroundColor: '#e3f2fd',
+                            color: '#1976d2',
+                            '&:hover': {
+                              backgroundColor: '#bbdefb'
+                            }
+                          }}
+                        />
+                      ))}
+                    </Stack>
                   </TableCell>
                 </TableRow>
               ))}

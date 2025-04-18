@@ -60,7 +60,7 @@ const EditOpportunity = () => {
       await axios.put(`${config.API_BASE_URL}/opportunity/${id}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      navigate("/opportunity");
+      navigate("/opportunities");
     } catch (err) {
       setError("Error updating opportunity.");
       console.error(err);

@@ -42,9 +42,6 @@ const ActivityFilterBar = ({
           </Select>
         </FormControl>
       </Box>
-      <Button variant="outlined" onClick={onRefresh}>Refresh</Button>
-      <Button variant="outlined" onClick={onExpandAll}>Expand All</Button>
-      <Button variant="outlined" onClick={onViewAll}>View All</Button>
     </Box>
   );
 };
