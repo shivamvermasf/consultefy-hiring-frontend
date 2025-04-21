@@ -86,16 +86,9 @@ const CandidatePage = () => {
   return (
     <Container maxWidth="xl" sx={{ mt: 2, px: 2, py: 2 }}>
       {/* Candidate Header Card */}
-      <Card variant="outlined" sx={{ mb: 2 }}>
-        <CardContent>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              p: 2,
-            }}
-          >
+      <Paper elevation={3} sx={{ mb: 2 }}>
+        <Box sx={{ p: 2, bgcolor: '#f5f5f5' }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography variant="h5">
               {candidate.name}
             </Typography>
@@ -136,63 +129,65 @@ const CandidatePage = () => {
               </Button>
             </Box>
           </Box>
+        </Box>
 
-          {/* Additional header details row */}
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            <Grid item xs={6} sm={3}>
-              <Typography variant="body2" color="textSecondary">Title</Typography>
-              <Typography variant="body1">Director of Vendor Relations</Typography>
-            </Grid>
-            <Grid item xs={6} sm={3}>
-              <Typography variant="body2" color="textSecondary">Company</Typography>
-              <Typography variant="body1">Farmers Coop. of Florida</Typography>
-            </Grid>
-            <Grid item xs={6} sm={3}>
+        {/* Additional header details row */}
+        <Box sx={{ p: 2 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={6} sm={6}>
               <Typography variant="body2" color="textSecondary">Phone</Typography>
               <Typography variant="body1">{candidate.phone}</Typography>
             </Grid>
-            <Grid item xs={6} sm={3}>
+            <Grid item xs={6} sm={6}>
               <Typography variant="body2" color="textSecondary">Email</Typography>
               <Typography variant="body1" sx={{ wordBreak: 'break-word' }}>{candidate.email}</Typography>
             </Grid>
           </Grid>
-        </CardContent>
-      </Card>
+        </Box>
+      </Paper>
 
       {/* Main Content Layout */}
-      <Grid container spacing={2}>
+      <Box sx={{ display: 'flex', gap: 2 }}>
         {/* Left Column: Details and Resume */}
-        <Grid item xs={12} lg={8}>
+        <Box sx={{ width: '66.66%' }}>
           <Card variant="outlined" sx={{ height: '100%' }}>
+            <Box sx={{ bgcolor: '#f5f5f5' }}>
+              <CardContent sx={{ pb: 1 }}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                  <Tabs value={leftTab} onChange={handleTabChange}>
+                    <Tab label="Details" />
+                    <Tab label="Resume" />
+                  </Tabs>
+                </Box>
+              </CardContent>
+            </Box>
             <CardContent>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-                <Tabs value={leftTab} onChange={handleTabChange}>
-                  <Tab label="Details" />
-                  <Tab label="Resume" />
-                </Tabs>
-              </Box>
               <Box sx={{ minHeight: 'calc(100vh - 400px)', overflow: 'auto' }}>
                 {leftTab === 0 && <CandidateDetails candidate={candidate} />}
                 {leftTab === 1 && <ResumePreview pdfUrl={pdfUrl} />}
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
         {/* Right Column: Activities */}
-        <Grid item xs={12} lg={4}>
+        <Box sx={{ width: '33.33%' }}>
           <Card variant="outlined" sx={{ height: '100%' }}>
+            <Box sx={{ bgcolor: '#f5f5f5' }}>
+              <CardContent sx={{ pb: 1 }}>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                  Activities
+                </Typography>
+              </CardContent>
+            </Box>
             <CardContent>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                Activities
-              </Typography>
               <Box sx={{ minHeight: 'calc(100vh - 400px)', overflow: 'auto' }}>
                 <Activities parentType="Candidate" parentId={id} />
               </Box>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Container>
   );
 };

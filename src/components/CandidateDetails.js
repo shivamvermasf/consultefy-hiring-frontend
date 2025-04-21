@@ -1,6 +1,6 @@
 // src/components/CandidateDetails.js
 import React from "react";
-import { Typography, Box, Button, Grid } from "@mui/material";
+import { Typography, Box, Button, Grid, Chip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const CandidateDetails = ({ candidate }) => {
@@ -13,33 +13,106 @@ const CandidateDetails = ({ candidate }) => {
   return (
     <Box>
       <Typography variant="h6" gutterBottom>Candidate Details</Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <Typography variant="subtitle1"><strong>Full Name:</strong> {candidate.name}</Typography>
-          <Typography variant="subtitle1"><strong>Email:</strong> {candidate.email}</Typography>
-          <Typography variant="subtitle1"><strong>Phone:</strong> {candidate.phone}</Typography>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Typography variant="subtitle1">
-            <strong>LinkedIn:</strong>{" "}
-            {candidate.linkedin ? (
-              <a href={candidate.linkedin} target="_blank" rel="noopener noreferrer">
-                {candidate.linkedin}
-              </a>
-            ) : "Not Provided"}
-          </Typography>
-          <Typography variant="subtitle1">
-            <strong>Skills:</strong>{" "}
-            {Array.isArray(candidate.skills) ? candidate.skills.join(", ") : candidate.skills}
-          </Typography>
-          <Typography variant="subtitle1">
-            <strong>Experience:</strong> {candidate.experience} years
-          </Typography>
-          <Typography variant="subtitle1">
-            <strong>Expected Salary:</strong> ₹{candidate.expected_salary}
-          </Typography>
-        </Grid>
-      </Grid>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Box sx={{ display: 'flex', gap: 4 }}>
+          <Box sx={{ width: '50%' }}>
+            <Typography variant="subtitle2" color="textSecondary">Phone</Typography>
+            <Typography variant="body1">{candidate.phone}</Typography>
+          </Box>
+          <Box sx={{ width: '50%' }}>
+            <Typography variant="subtitle2" color="textSecondary">Email</Typography>
+            <Typography variant="body1" sx={{ wordBreak: 'break-word' }}>{candidate.email}</Typography>
+          </Box>
+        </Box>
+
+        <Box sx={{ display: 'flex', gap: 4 }}>
+          <Box sx={{ width: '50%' }}>
+            <Typography variant="subtitle2" color="textSecondary">Location</Typography>
+            <Typography variant="body1">{candidate.location || "Not Provided"}</Typography>
+          </Box>
+          <Box sx={{ width: '50%' }}>
+            <Typography variant="subtitle2" color="textSecondary">Experience</Typography>
+            <Typography variant="body1">{candidate.experience} years</Typography>
+          </Box>
+        </Box>
+
+        <Box sx={{ display: 'flex', gap: 4 }}>
+          <Box sx={{ width: '50%' }}>
+            <Typography variant="subtitle2" color="textSecondary">Current Salary</Typography>
+            <Typography variant="body1">
+              {candidate.current_salary
+                ? `$${candidate.current_salary.toLocaleString()}`
+                : "Not Provided"}
+            </Typography>
+          </Box>
+          <Box sx={{ width: '50%' }}>
+            <Typography variant="subtitle2" color="textSecondary">Expected Salary</Typography>
+            <Typography variant="body1">
+              {candidate.expected_salary
+                ? `$${candidate.expected_salary.toLocaleString()}`
+                : "Not Provided"}
+            </Typography>
+          </Box>
+        </Box>
+
+        <Box sx={{ display: 'flex', gap: 4 }}>
+          <Box sx={{ width: '50%' }}>
+            <Typography variant="subtitle2" color="textSecondary">Notice Period</Typography>
+            <Typography variant="body1">{candidate.notice_period || "Not Provided"}</Typography>
+          </Box>
+          <Box sx={{ width: '50%' }}>
+            <Typography variant="subtitle2" color="textSecondary">Status</Typography>
+            <Typography variant="body1">{candidate.status || "Not Provided"}</Typography>
+          </Box>
+        </Box>
+
+        <Box sx={{ width: '100%' }}>
+          <Typography variant="subtitle2" color="textSecondary">Skills</Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+            {candidate.skills ? (
+              typeof candidate.skills === 'string' ? (
+                candidate.skills.split(',').map((skill, index) => (
+                  <Chip
+                    key={index}
+                    label={skill.trim()}
+                    size="small"
+                    sx={{
+                      backgroundColor: '#e3f2fd',
+                      color: '#1976d2',
+                      '& .MuiChip-label': {
+                        px: 1,
+                      },
+                    }}
+                  />
+                ))
+              ) : Array.isArray(candidate.skills) ? (
+                candidate.skills.map((skill, index) => (
+                  <Chip
+                    key={index}
+                    label={skill}
+                    size="small"
+                    sx={{
+                      backgroundColor: '#e3f2fd',
+                      color: '#1976d2',
+                      '& .MuiChip-label': {
+                        px: 1,
+                      },
+                    }}
+                  />
+                ))
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  No skills listed
+                </Typography>
+              )
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                No skills listed
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      </Box>
       <Button
         variant="outlined"
         onClick={() => navigate(`/edit-candidate/${candidate.id}`)}

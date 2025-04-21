@@ -18,6 +18,7 @@ import FinancePage from './components/FinancePage';
 import JobFinancePage from './components/JobFinancePage';
 import JobList from './components/JobList';
 import JobDetails from './components/JobDetails';
+import JobAttendancePage from './components/JobAttendancePage';
 
 const PrivateRoute = ({ element }) => {
   const token = localStorage.getItem("token");
@@ -45,6 +46,7 @@ function App() {
         <Route path="/jobs/create" element={<PrivateRoute element={<CreateJob />} />} />
         <Route path="/jobs/:id" element={<PrivateRoute element={<JobDetails />} />} />
         <Route path="/jobs/:id/finance" element={<PrivateRoute element={<JobFinancePage />} />} />
+        <Route path="/jobs/:id/attendance" element={<PrivateRoute element={<JobAttendancePage />} />} />
         <Route path="/finance" element={<FinancePage />} />
       </Routes>
     </Router>

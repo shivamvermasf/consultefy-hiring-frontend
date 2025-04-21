@@ -2,24 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Container,
-  Grid,
   Card,
   CardContent,
   Typography,
   Box,
-  Tabs,
-  Tab,
-  Button,
   CircularProgress,
+  Alert,
+  Grid,
 } from '@mui/material';
 import axios from 'axios';
 import config from '../config';
-import InvoiceGenerator from './finance/InvoiceGenerator';
-import FinancialDashboard from './finance/FinancialDashboard';
+import AttendanceTracker from './finance/AttendanceTracker';
 
-const JobFinancePage = () => {
+const JobAttendancePage = () => {
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState(0);
   const [jobDetails, setJobDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -30,6 +26,7 @@ const JobFinancePage = () => {
 
   const fetchJobDetails = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem('token');
       const response = await axios.get(`${config.API_BASE_URL}/jobs/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -40,10 +37,6 @@ const JobFinancePage = () => {
       setError('Failed to fetch job details');
       setLoading(false);
     }
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
   };
 
   if (loading) {
@@ -64,10 +57,10 @@ const JobFinancePage = () => {
 
   return (
     <Container maxWidth="xl" sx={{ mt: 3 }}>
-      <Card variant="outlined" sx={{ mb: 3 }}>
+      <Card variant="outlined" sx={{ mb: 3, bgcolor: '#f5f5f5' }}>
         <CardContent>
           <Typography variant="h5" gutterBottom>
-            Financial Management - {jobDetails?.opportunity_title}
+            Attendance Management - {jobDetails?.opportunity_title}
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={4}>
@@ -88,29 +81,12 @@ const JobFinancePage = () => {
         </CardContent>
       </Card>
 
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs value={activeTab} onChange={handleTabChange} variant="fullWidth">
-          <Tab label="Invoice Generation" />
-          <Tab label="Financial Dashboard" />
-        </Tabs>
-      </Box>
-
-      <Box sx={{ mt: 2 }}>
-        {activeTab === 0 && (
-          <InvoiceGenerator 
-            jobId={id} 
-            jobDetails={jobDetails}
-          />
-        )}
-        {activeTab === 1 && (
-          <FinancialDashboard 
-            jobId={id} 
-            jobDetails={jobDetails}
-          />
-        )}
-      </Box>
+      <AttendanceTracker 
+        jobId={id} 
+        jobDetails={jobDetails}
+      />
     </Container>
   );
 };
 
-export default JobFinancePage; 
+export default JobAttendancePage; 
