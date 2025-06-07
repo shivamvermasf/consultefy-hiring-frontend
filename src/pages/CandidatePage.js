@@ -12,14 +12,16 @@ import {
   CircularProgress,
   Button,
   Paper,
+  Alert,
 } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import axios from "axios";
 import config from "../config";
-import CandidateDetails from "./CandidateDetails";
-import ResumePreview from "./ResumePreview";
-import Activities from "./Activities";
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import CandidateDetails from "../components/candidates/CandidateDetails";
+import ResumePreview from "../components/candidates/ResumePreview";
+import Activities from "../components/activities/Activities";
+import Documents from '../components/documents/Documents';
 
 const CandidatePage = () => {
   const { id } = useParams();
@@ -85,66 +87,51 @@ const CandidatePage = () => {
 
   return (
     <Container maxWidth="xl" sx={{ mt: 2, px: 2, py: 2 }}>
-      {/* Candidate Header Card */}
-      <Paper elevation={3} sx={{ mb: 2 }}>
-        <Box sx={{ p: 2, bgcolor: '#f5f5f5' }}>
+      <Grid>
+        <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="h5">
-              {candidate.name}
-            </Typography>
+            <Typography variant="h5">{candidate.name}</Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               {activeJob && (
                 <Button
+                  variant="outlined"
                   startIcon={<AttachMoneyIcon />}
                   onClick={() => navigate(`/jobs/${activeJob.id}/finance`)}
                   sx={{ 
-                    color: '#1976d2',
-                    backgroundColor: 'transparent',
-                    '&:hover': {
-                      backgroundColor: 'transparent',
-                    },
-                    textTransform: 'uppercase',
+                    minWidth: '200px',
+                    textTransform: 'none',
                     fontSize: '0.875rem',
-                    padding: '4px 8px',
+                    padding: '8px 16px',
                   }}
                 >
                   View Financials
                 </Button>
               )}
               <Button
+                variant="contained"
+                color="primary"
                 startIcon={<EditIcon />}
                 onClick={() => navigate(`/edit-candidate/${id}`)}
                 sx={{ 
-                  color: '#1976d2',
-                  backgroundColor: 'transparent',
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                  },
-                  textTransform: 'uppercase',
+                  minWidth: '200px',
+                  textTransform: 'none',
                   fontSize: '0.875rem',
-                  padding: '4px 8px',
+                  padding: '8px 16px',
                 }}
               >
                 Edit/Update Candidate
               </Button>
             </Box>
           </Box>
-        </Box>
 
-        {/* Additional header details row */}
-        <Box sx={{ p: 2 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={6} sm={6}>
-              <Typography variant="body2" color="textSecondary">Phone</Typography>
-              <Typography variant="body1">{candidate.phone}</Typography>
-            </Grid>
-            <Grid item xs={6} sm={6}>
-              <Typography variant="body2" color="textSecondary">Email</Typography>
-              <Typography variant="body1" sx={{ wordBreak: 'break-word' }}>{candidate.email}</Typography>
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            <Grid item xs={12} md={6} lg={6}>
+              <Typography variant="subtitle1"><strong>Phone:</strong> {candidate.phone}</Typography>
+              <Typography variant="subtitle1"><strong>Email:</strong> {candidate.email}</Typography>
             </Grid>
           </Grid>
-        </Box>
-      </Paper>
+        </Paper>
+      </Grid>
 
       {/* Main Content Layout */}
       <Box sx={{ display: 'flex', gap: 2 }}>
@@ -157,6 +144,7 @@ const CandidatePage = () => {
                   <Tabs value={leftTab} onChange={handleTabChange}>
                     <Tab label="Details" />
                     <Tab label="Resume" />
+                    <Tab label="Documents" />
                   </Tabs>
                 </Box>
               </CardContent>
@@ -165,6 +153,7 @@ const CandidatePage = () => {
               <Box sx={{ minHeight: 'calc(100vh - 400px)', overflow: 'auto' }}>
                 {leftTab === 0 && <CandidateDetails candidate={candidate} />}
                 {leftTab === 1 && <ResumePreview pdfUrl={pdfUrl} />}
+                {leftTab === 2 && <Documents entityType="candidate" entityId={id} />}
               </Box>
             </CardContent>
           </Card>

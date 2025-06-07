@@ -1,56 +1,89 @@
 import React from "react";
-import { Navigate, BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Dashboard from "./pages/Dashboard";
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import CssBaseline from '@mui/material/CssBaseline';
 import Login from "./pages/Login";
-import Navbar from "./components/Navbar";
-import CandidateForm from "./components/CandidateForm";
-import CandidateList from "./components/CandidateList";
-import EditCandidate from "./components/EditCandidate";
-import CandidatePage from "./components/CandidatePage";
-import CreateOpportunity from "./components/CreateOpportunity";
-import EditOpportunity from "./components/EditOpportunity";
-import OpportunitiesList from "./components/OpportunitiesList";
-import OpportunityPage from "./components/OpportunityPage";
-import CertificatesPage from "./components/CertificatesPage";  // ✅ Import Certificates Page
-import AdminPage from "./pages/AdminPage";  // ✅ Import Admin Page
-import CreateJob from "./components/CreateJob";
-import FinancePage from './components/FinancePage';
-import JobFinancePage from './components/JobFinancePage';
-import JobList from './components/JobList';
-import JobDetails from './components/JobDetails';
-import JobAttendancePage from './components/JobAttendancePage';
+import LoginPage from './pages/LoginPage';
+import Dashboard from "./pages/Dashboard";
+import DashboardPage from './pages/DashboardPage';
+import JobList from "./components/jobs/JobList";
+import JobDetails from "./components/jobs/JobDetails";
+import JobDetailsPage from './pages/JobDetailsPage';
+import JobFinancePage from "./components/jobs/JobFinancePage";
+import JobAttendancePage from "./components/jobs/JobAttendancePage";
+import AdminPage from "./pages/AdminPage";
+import MonthlyInvoicePage from "./components/finance/MonthlyInvoicePage";
+import InvoiceDetailsPage from './components/finance/InvoiceDetailsPage';
+import InvoicePDFPreview from './components/finance/InvoicePDFPreview';
+import CandidateList from "./components/candidates/CandidateList";
+import CandidatePage from "./pages/CandidatePage";
+import CandidateForm from "./components/candidates/CandidateForm";
+import EditCandidate from "./components/candidates/EditCandidate";
+import OpportunitiesList from "./components/opportunities/OpportunitiesList";
+import OpportunityPage from "./pages/OpportunityPage";
+import CreateOpportunity from "./components/opportunities/CreateOpportunity";
+import EditOpportunity from "./components/opportunities/EditOpportunity";
+import OpportunitiesPage from './pages/OpportunitiesPage';
+import FinancePage from './pages/FinancePage';
+import AttendancePage from './pages/AttendancePage';
+import PrivateRoute from './components/PrivateRoute';
+import CreateJob from './pages/CreateJob';
+import TaskView from './components/activities/TaskView';
+import LayoutWithSidebar from './components/LayoutWithSidebar';
 
-const PrivateRoute = ({ element }) => {
-  const token = localStorage.getItem("token");
-  return token ? element : <Navigate to="/login" />;
+// Create a wrapper component to handle navbar visibility
+const AppContent = () => {
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
+
+  return (
+    <>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="*"
+          element={
+            <PrivateRoute>
+              <LayoutWithSidebar>
+                <Routes>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/add-candidate" element={<CandidateForm />} />
+                  <Route path="/candidates" element={<CandidateList />} />
+                  <Route path="/edit-candidate/:id" element={<EditCandidate />} />
+                  <Route path="/candidates/:id" element={<CandidatePage />} />
+                  <Route path="/opportunities" element={<OpportunitiesPage />} />
+                  <Route path="/opportunity/create" element={<CreateOpportunity />} />
+                  <Route path="/opportunity/edit/:id" element={<EditOpportunity />} />
+                  <Route path="/opportunity/:id" element={<OpportunityPage />} />
+                  <Route path="/admin" element={<AdminPage />} />
+                  <Route path="/jobs" element={<JobList />} />
+                  <Route path="/jobs/create" element={<CreateJob />} />
+                  <Route path="/jobs/:id" element={<JobDetailsPage />} />
+                  <Route path="/jobs/:id/finance" element={<JobFinancePage />} />
+                  <Route path="/jobs/:id/attendance" element={<JobAttendancePage />} />
+                  <Route path="/monthly-invoice" element={<MonthlyInvoicePage />} />
+                  <Route path="/finance" element={<FinancePage />} />
+                  <Route path="/finance/invoices/:id" element={<InvoiceDetailsPage />} />
+                  <Route path="/attendance" element={<AttendancePage />} />
+                  <Route path="/activities/:id" element={<TaskView />} />
+                </Routes>
+              </LayoutWithSidebar>
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
 };
 
-function App() {
+const App = () => {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<PrivateRoute element={<Dashboard />} />} />
-        <Route path="/add-candidate" element={<PrivateRoute element={<CandidateForm />} />} />
-        <Route path="/candidates" element={<PrivateRoute element={<CandidateList />} />} />
-        <Route path="/edit-candidate/:id" element={<EditCandidate />} />
-        <Route path="/candidates/:id" element={<CandidatePage />} />
-        <Route path="/opportunities" element={<PrivateRoute element={<OpportunitiesList />} />} />
-        <Route path="/opportunity/create" element={<CreateOpportunity />} />
-        <Route path="/opportunity/edit/:id" element={<EditOpportunity />} />
-        <Route path="/opportunity/:id" element={<OpportunityPage />} />
-        <Route path="/certificates" element={<PrivateRoute element={<CertificatesPage />} />} />  
-        <Route path="/admin" element={<PrivateRoute element={<AdminPage />} />} />  {/* ✅ Add Route for Admin Page */}
-        <Route path="/jobs" element={<PrivateRoute element={<JobList />} />} />
-        <Route path="/jobs/create" element={<PrivateRoute element={<CreateJob />} />} />
-        <Route path="/jobs/:id" element={<PrivateRoute element={<JobDetails />} />} />
-        <Route path="/jobs/:id/finance" element={<PrivateRoute element={<JobFinancePage />} />} />
-        <Route path="/jobs/:id/attendance" element={<PrivateRoute element={<JobAttendancePage />} />} />
-        <Route path="/finance" element={<FinancePage />} />
-      </Routes>
-    </Router>
+    <>
+      <CssBaseline />
+      <Router>
+        <AppContent />
+      </Router>
+    </>
   );
-}
+};
 
 export default App;

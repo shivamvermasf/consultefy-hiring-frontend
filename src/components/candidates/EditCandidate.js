@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, TextField, Button, Paper, Chip, Autocomplete, CircularProgress } from "@mui/material";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 
 const EditCandidate = () => {
   const { id } = useParams();

@@ -11,8 +11,8 @@ import {
   Grid,
 } from '@mui/material';
 import axios from 'axios';
-import config from '../config';
-import AttendanceTracker from './finance/AttendanceTracker';
+import config from "../../config";
+import AttendanceTracker from "../finance/AttendanceTracker";
 
 const JobAttendancePage = () => {
   const { id } = useParams();
@@ -57,7 +57,7 @@ const JobAttendancePage = () => {
 
   return (
     <Container maxWidth="xl" sx={{ mt: 3 }}>
-      <Card variant="outlined" sx={{ mb: 3, bgcolor: '#f5f5f5' }}>
+      <Card variant="outlined" sx={{ mb: 3, bgcolor: '#f5f5f5', borderRadius: 3 }}>
         <CardContent>
           <Typography variant="h5" gutterBottom>
             Attendance Management - {jobDetails?.opportunity_title}

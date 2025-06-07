@@ -13,9 +13,9 @@ import {
   CircularProgress,
 } from '@mui/material';
 import axios from 'axios';
-import config from '../config';
-import InvoiceGenerator from './finance/InvoiceGenerator';
-import FinancialDashboard from './finance/FinancialDashboard';
+import config from "../../config";
+import InvoiceGenerator from "../finance/InvoiceGenerator";
+import FinancialDashboard from "../finance/FinancialDashboard";
 
 const JobFinancePage = () => {
   const { id } = useParams();
@@ -64,7 +64,7 @@ const JobFinancePage = () => {
 
   return (
     <Container maxWidth="xl" sx={{ mt: 3 }}>
-      <Card variant="outlined" sx={{ mb: 3 }}>
+      <Card variant="outlined" sx={{ mb: 3, borderRadius: 3 }}>
         <CardContent>
           <Typography variant="h5" gutterBottom>
             Financial Management - {jobDetails?.opportunity_title}

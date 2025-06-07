@@ -23,7 +23,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 import LaunchIcon from '@mui/icons-material/Launch';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import axios from 'axios';
-import config from '../config';
+import config from "../../config";
 
 const JobDetails = () => {
   const { id } = useParams();

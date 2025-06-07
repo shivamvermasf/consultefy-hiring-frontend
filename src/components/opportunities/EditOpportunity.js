@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import { Box, Paper, Typography, TextField, Button, MenuItem, FormControl, InputLabel, Select } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css"; // Import Quill styles
-import "../styles/QuillEditor.css"; // Custom styles
+import "../../styles/QuillEditor.css"; // Custom styles
 
 const EditOpportunity = () => {
   const { id } = useParams();

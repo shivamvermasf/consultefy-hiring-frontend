@@ -1,13 +1,14 @@
 // src/components/Activities.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 import { Box, Typography, Button, Stack } from "@mui/material";
 import ActivityFilterBar from "./ActivityFilterBar";
 import ActivitiesTimeline from "./ActivitiesTimeline"; // Use the timeline-based layout
 import NewTaskForm from "./NewTaskForm";
 import LogCallForm from "./LogCallForm";
 import NewEventForm from "./NewEventForm";
+import LogNotesForm from "./LogNotesForm";
 
 const Activities = ({ parentType, parentId }) => {
   const [activities, setActivities] = useState([]);
@@ -24,6 +25,7 @@ const Activities = ({ parentType, parentId }) => {
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [showCallForm, setShowCallForm] = useState(false);
   const [showEventForm, setShowEventForm] = useState(false);
+  const [showNotesForm, setShowNotesForm] = useState(false);
 
   const fetchActivities = async () => {
     setLoading(true);
@@ -68,6 +70,8 @@ const Activities = ({ parentType, parentId }) => {
   const handleCloseCallForm = () => setShowCallForm(false);
   const handleOpenEventForm = () => setShowEventForm(true);
   const handleCloseEventForm = () => setShowEventForm(false);
+  const handleOpenNotesForm = () => setShowNotesForm(true);
+  const handleCloseNotesForm = () => setShowNotesForm(false);
 
   // Handler for saving a new activity
   const handleSaveActivity = async (newActivity) => {
@@ -97,6 +101,7 @@ const Activities = ({ parentType, parentId }) => {
         <Button variant="contained" onClick={handleOpenTaskForm}>New Task</Button>
         <Button variant="contained" onClick={handleOpenCallForm}>Log a Call</Button>
         <Button variant="contained" onClick={handleOpenEventForm}>New Event</Button>
+        <Button variant="contained" onClick={handleOpenNotesForm}>Log Notes</Button>
       </Stack>
 
       <Stack direction="row" spacing={2} sx={{ mb: 2}}>
@@ -123,10 +128,11 @@ const Activities = ({ parentType, parentId }) => {
         <ActivitiesTimeline activities={filteredActivities} />
       </Box>
 
-      {/* Modals for creating new tasks, calls, events */}
+      {/* Modals for creating new tasks, calls, events, and notes */}
       <NewTaskForm open={showTaskForm} onClose={handleCloseTaskForm} onSave={handleSaveActivity} />
       <LogCallForm open={showCallForm} onClose={handleCloseCallForm} onSave={handleSaveActivity} />
       <NewEventForm open={showEventForm} onClose={handleCloseEventForm} onSave={handleSaveActivity} />
+      <LogNotesForm open={showNotesForm} onClose={handleCloseNotesForm} onSave={handleSaveActivity} />
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-// src/components/CandidateList.js
+// src/components/OpportunityList.js
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -11,34 +11,30 @@ import {
   TableRow,
   Typography,
   Button,
-  Chip,
-  Stack,
+  IconButton,
   Card,
   CardContent,
+  Stack,
+  Chip,
   Divider,
-  IconButton,
   Tooltip,
   LinearProgress
 } from "@mui/material";
-import PeopleIcon from "@mui/icons-material/People";
-import EmailIcon from "@mui/icons-material/Email";
-import PhoneIcon from "@mui/icons-material/Phone";
-import BuildIcon from "@mui/icons-material/Build";
+import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 
-const CandidateList = () => {
-  const [candidates, setCandidates] = useState([]);
+const OpportunitiesList = () => {
+  const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Fetch candidate data from the backend
-  const fetchCandidates = async () => {
+  const fetchOpportunities = async () => {
     setLoading(true);
     const token = localStorage.getItem("token");
     if (!token) {
@@ -47,62 +43,48 @@ const CandidateList = () => {
       return;
     }
     try {
-      const response = await axios.get(`${config.API_BASE_URL}/candidates`, {
+      const response = await axios.get(`${config.API_BASE_URL}/opportunity`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setCandidates(response.data);
+      setOpportunities(response.data);
       setLoading(false);
     } catch (err) {
-      setError("Error fetching candidates.");
+      setError("Error fetching opportunities.");
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCandidates();
+    fetchOpportunities();
   }, []);
 
-  // Calculate total candidates and count by skills
-  const totalCandidates = candidates.length;
-  const skillsCount = {};
-  candidates.forEach((candidate) => {
-    let candidateSkills = candidate.skills;
-    if (typeof candidateSkills === "string") {
-      try {
-        candidateSkills = JSON.parse(candidateSkills);
-      } catch (e) {
-        candidateSkills = candidateSkills.split(",").map((s) => s.trim());
-      }
-    }
-    if (Array.isArray(candidateSkills)) {
-      candidateSkills.forEach((skill) => {
-        if (skill) {
-          skillsCount[skill] = (skillsCount[skill] || 0) + 1;
-        }
-      });
-    }
-  });
+  // Total opportunities count
+  const totalOpportunities = opportunities.length;
+  const activeOpportunities = opportunities.filter(opp => opp.status === 'Open').length;
 
-  // Handler for clicking on a candidate row
-  const handleRowClick = (id, event) => {
-    if (event.target.closest('.MuiChip-root')) {
-      return;
-    }
-    navigate(`/candidates/${id}`);
+  // Handler for clicking on the "Add Opportunity" button
+  const handleAddOpportunity = () => {
+    navigate("/opportunity/create");
   };
 
-  // Handler for adding a new candidate
-  const handleAddCandidate = () => {
-    navigate("/add-candidate");
+  // Handler for editing an opportunity
+  const handleEditOpportunity = (id, e) => {
+    e.stopPropagation();
+    navigate(`/opportunity/edit/${id}`);
   };
 
-  // Function to parse and normalize skills
+  // Handler for clicking on a row to view details
+  const handleRowClick = (id) => {
+    navigate(`/opportunity/${id}`);
+  };
+
+  // Function to parse skills
   const parseSkills = (skills) => {
-    if (typeof skills === "string") {
+    if (typeof skills === 'string') {
       try {
         return JSON.parse(skills);
       } catch (e) {
-        return skills.split(",").map((s) => s.trim());
+        return skills.split(',').map(s => s.trim());
       }
     }
     return Array.isArray(skills) ? skills : [];
@@ -123,7 +105,8 @@ const CandidateList = () => {
         sx={{ 
           mb: 3, 
           bgcolor: '#f8f9fa',
-          boxShadow: '0px 2px 4px rgba(0,0,0,0.1)'
+          boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
+          borderRadius: 3
         }}
       >
         <CardContent>
@@ -136,10 +119,10 @@ const CandidateList = () => {
             <Box flex={1} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box>
                 <Typography variant="h5" fontWeight="bold" color="text.primary">
-                  Candidate Overview
+                  Opportunity Overview
                 </Typography>
                 <Typography variant="subtitle1" color="text.secondary">
-                  Total Candidates: {totalCandidates}
+                  Total Opportunities: {totalOpportunities} | Active: {activeOpportunities}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -147,7 +130,7 @@ const CandidateList = () => {
                   variant="contained"
                   color="primary"
                   startIcon={<AddIcon />}
-                  onClick={handleAddCandidate}
+                  onClick={handleAddOpportunity}
                   sx={{ 
                     padding: '6px 12px',
                     '& .MuiButton-startIcon': {
@@ -155,14 +138,14 @@ const CandidateList = () => {
                     }
                   }}
                 >
-                  Add Candidate
+                  Add Opportunity
                 </Button>
               </Box>
             </Box>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Tooltip title="Refresh list">
                 <IconButton 
-                  onClick={fetchCandidates}
+                  onClick={fetchOpportunities}
                   size="small"
                 >
                   <RefreshIcon />
@@ -182,21 +165,24 @@ const CandidateList = () => {
 
           <Box>
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
-              Top Skills
+              Status Overview
             </Typography>
             <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1 }}>
-              {Object.entries(skillsCount)
-                .sort(([, a], [, b]) => b - a)
-                .slice(0, 5)
-                .map(([skill, count]) => (
-                  <Chip
-                    key={skill}
-                    label={`${skill} (${count})`}
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                  />
-                ))}
+              {['Open', 'Candidate Mapping', 'Profile Shared', 'Interviewing', 'Closed'].map((status) => {
+                const count = opportunities.filter(opp => opp.status === status).length;
+                if (count > 0) {
+                  return (
+                    <Chip
+                      key={status}
+                      label={`${status} (${count})`}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                    />
+                  );
+                }
+                return null;
+              })}
             </Stack>
           </Box>
         </CardContent>
@@ -217,16 +203,19 @@ const CandidateList = () => {
           <Table>
             <TableHead sx={{ bgcolor: '#f8f9fa' }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Skills</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Title</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Company</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Location</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Required Skills</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Rate/Hour</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 600 }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {candidates.map((candidate) => (
+              {opportunities.map((opp) => (
                 <TableRow
-                  key={candidate.id}
+                  key={opp.id}
                   hover
                   sx={{ 
                     cursor: "pointer",
@@ -234,24 +223,14 @@ const CandidateList = () => {
                       backgroundColor: 'rgba(0, 0, 0, 0.04)'
                     }
                   }}
-                  onClick={(e) => handleRowClick(candidate.id, e)}
+                  onClick={() => handleRowClick(opp.id)}
                 >
-                  <TableCell>{candidate.name}</TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <EmailIcon fontSize="small" color="action" />
-                      {candidate.email}
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <PhoneIcon fontSize="small" color="action" />
-                      {candidate.phone}
-                    </Box>
-                  </TableCell>
+                  <TableCell>{opp.title}</TableCell>
+                  <TableCell>{opp.company}</TableCell>
+                  <TableCell>{opp.location}</TableCell>
                   <TableCell>
                     <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 1 }}>
-                      {parseSkills(candidate.skills).map((skill, index) => (
+                      {parseSkills(opp.required_skills).map((skill, index) => (
                         <Chip
                           key={index}
                           label={skill}
@@ -259,13 +238,41 @@ const CandidateList = () => {
                           sx={{
                             backgroundColor: '#e3f2fd',
                             color: '#1976d2',
+                            boxShadow: '0px 1px 3px rgba(0,0,0,0.1)',
                             '&:hover': {
-                              backgroundColor: '#bbdefb'
-                            }
+                              backgroundColor: '#bbdefb',
+                              boxShadow: '0px 2px 4px rgba(0,0,0,0.15)'
+                            },
+                            fontWeight: 500,
+                            border: '1px solid rgba(25, 118, 210, 0.1)'
                           }}
                         />
                       ))}
                     </Stack>
+                  </TableCell>
+                  <TableCell>{opp.rate_per_hour}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={opp.status}
+                      size="small"
+                      color={
+                        opp.status === 'Candidate Selected' ? 'success' 
+                        : opp.status === 'Closed Lost' ? 'error'
+                        : 'default'
+                      }
+                      sx={{ 
+                        textTransform: 'capitalize',
+                        backgroundColor: opp.status === 'Open' ? '#f5f5f5' : undefined
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell align="right">
+                    <IconButton 
+                      onClick={(e) => handleEditOpportunity(opp.id, e)}
+                      size="small"
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
@@ -277,4 +284,4 @@ const CandidateList = () => {
   );
 };
 
-export default CandidateList;
+export default OpportunitiesList;

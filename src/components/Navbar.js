@@ -42,6 +42,9 @@ const Navbar = () => {
           <Button sx={{ color: "white" }} component={Link} to="/jobs">
             Jobs
           </Button>
+          <Button sx={{ color: "white" }} component={Link} to="/monthly-invoice">
+            Monthly Invoice
+          </Button>
           <Button sx={{ color: "white" }} component={Link} to="/certificates">
             Certificates
           </Button>

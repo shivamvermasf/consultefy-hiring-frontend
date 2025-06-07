@@ -61,7 +61,7 @@ const InvoiceGenerator = ({ jobId, jobDetails }) => {
   };
 
   return (
-    <Card variant="outlined">
+    <Card variant="outlined" sx={{ borderRadius: 3 }}>
       <CardContent>
         <Box sx={{ mb: 3 }}>
           <Typography variant="h6" gutterBottom>

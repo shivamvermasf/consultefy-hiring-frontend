@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { TextField, Button, Container, Typography, Grid, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom"; // Updated for React Router v6
 import axios from "axios";
-import ResumeUpload from "./ResumeUpload";
-import config from "../config"; // Import the config file
+import ResumeUpload from "../ResumeUpload";
+import config from "../../config"; // Import the config file
 
 const CandidateForm = () => {
   const [candidate, setCandidate] = useState({

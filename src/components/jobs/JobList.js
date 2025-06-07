@@ -26,7 +26,7 @@ import AddIcon from '@mui/icons-material/Add';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import axios from 'axios';
-import config from '../config';
+import config from "../../config";
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
@@ -108,7 +108,8 @@ const JobList = () => {
         sx={{ 
           mb: 3, 
           bgcolor: '#f8f9fa',
-          boxShadow: '0px 2px 4px rgba(0,0,0,0.1)'
+          boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
+          borderRadius: 3
         }}
       >
         <CardContent>

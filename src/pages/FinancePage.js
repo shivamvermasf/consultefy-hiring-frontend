@@ -122,7 +122,7 @@ const FinancePage = () => {
       </Grid>
 
       {/* Active Jobs Table */}
-      <Card variant="outlined">
+      <Card variant="outlined" sx={{ borderRadius: 3 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             Active Jobs

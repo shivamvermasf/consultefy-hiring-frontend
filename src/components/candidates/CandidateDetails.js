@@ -70,23 +70,27 @@ const CandidateDetails = ({ candidate }) => {
           <Typography variant="subtitle2" color="textSecondary">Skills</Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
             {candidate.skills ? (
-              typeof candidate.skills === 'string' ? (
-                candidate.skills.split(',').map((skill, index) => (
-                  <Chip
-                    key={index}
-                    label={skill.trim()}
-                    size="small"
-                    sx={{
-                      backgroundColor: '#e3f2fd',
-                      color: '#1976d2',
-                      '& .MuiChip-label': {
-                        px: 1,
-                      },
-                    }}
-                  />
-                ))
-              ) : Array.isArray(candidate.skills) ? (
-                candidate.skills.map((skill, index) => (
+              (() => {
+                let skillsArray;
+                if (typeof candidate.skills === 'string') {
+                  try {
+                    // Try to parse if it's a JSON string
+                    skillsArray = JSON.parse(candidate.skills);
+                  } catch (e) {
+                    // If not JSON, split by comma
+                    skillsArray = candidate.skills.split(',').map(s => s.trim());
+                  }
+                } else if (Array.isArray(candidate.skills)) {
+                  skillsArray = candidate.skills;
+                } else {
+                  return (
+                    <Typography variant="body2" color="text.secondary">
+                      No skills listed
+                    </Typography>
+                  );
+                }
+
+                return skillsArray.map((skill, index) => (
                   <Chip
                     key={index}
                     label={skill}
@@ -99,12 +103,8 @@ const CandidateDetails = ({ candidate }) => {
                       },
                     }}
                   />
-                ))
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  No skills listed
-                </Typography>
-              )
+                ));
+              })()
             ) : (
               <Typography variant="body2" color="text.secondary">
                 No skills listed

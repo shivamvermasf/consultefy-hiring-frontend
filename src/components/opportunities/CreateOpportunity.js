@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Box, Paper, Typography, TextField, Button, MenuItem, FormControl, InputLabel, Select } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 
 const CreateOpportunity = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const CreateOpportunity = () => {
       await axios.post(`${config.API_BASE_URL}/opportunity`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      navigate("/opportunity");
+      navigate("/opportunities");
     } catch (err) {
       setError("Error creating opportunity.");
       console.error(err);

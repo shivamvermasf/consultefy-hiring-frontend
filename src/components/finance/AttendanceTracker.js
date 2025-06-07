@@ -349,7 +349,7 @@ const AttendanceTracker = ({ jobId, jobDetails }) => {
       </Grid>
 
       {/* Month Selector and Controls */}
-      <Card variant="outlined" sx={{ mb: 3 }}>
+      <Card variant="outlined" sx={{ mb: 3, borderRadius: 3 }}>
         <CardContent>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={4}>

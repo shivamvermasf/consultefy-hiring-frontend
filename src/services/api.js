@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from "../config";
+import axiosInstance from '../utils/axios';
 
 
 const API_BASE_URL = config.API_BASE_URL;
@@ -34,4 +35,16 @@ export const loginUser = async (email, password) => {
 
 export const searchCandidates = async (searchQuery) => {
     return await axios.get(`${API_BASE_URL}/candidates/search?query=${searchQuery}`, { headers: getAuthHeader() });
+};
+
+export const getUpcomingTasks = async () => {
+    return await axios.get(`${API_BASE_URL}/activities/upcoming`, { headers: getAuthHeader() });
+};
+
+export const getOverdueTasks = async () => {
+    return await axios.get(`${API_BASE_URL}/activities/overdue`, { headers: getAuthHeader() });
+};
+
+export const getRecentJobs = async () => {
+    return await axios.get(`${API_BASE_URL}/opportunities/recent`, { headers: getAuthHeader() });
 };

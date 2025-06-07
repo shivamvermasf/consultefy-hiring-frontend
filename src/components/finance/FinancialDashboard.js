@@ -119,7 +119,7 @@ const FinancialDashboard = ({ jobId, jobDetails }) => {
         <Typography variant="h6" gutterBottom>Year-to-Date Summary</Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
-            <Paper elevation={2} sx={{ p: 2, height: '100%' }}>
+            <Paper elevation={2} sx={{ p: 2, height: '100%', borderRadius: 3 }}>
               <Typography variant="subtitle2" color="textSecondary">Total Billing</Typography>
               <Typography variant="h6">
                 {formatCurrency(yearToDateSummary?.totalBilling || 0)}
@@ -127,7 +127,7 @@ const FinancialDashboard = ({ jobId, jobDetails }) => {
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Paper elevation={2} sx={{ p: 2, height: '100%' }}>
+            <Paper elevation={2} sx={{ p: 2, height: '100%', borderRadius: 3 }}>
               <Typography variant="subtitle2" color="textSecondary">Total Salary</Typography>
               <Typography variant="h6">
                 {formatCurrency(yearToDateSummary?.totalSalary || 0)}
@@ -135,7 +135,7 @@ const FinancialDashboard = ({ jobId, jobDetails }) => {
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Paper elevation={2} sx={{ p: 2, height: '100%' }}>
+            <Paper elevation={2} sx={{ p: 2, height: '100%', borderRadius: 3 }}>
               <Typography variant="subtitle2" color="textSecondary">Total Commission</Typography>
               <Typography variant="h6">
                 {formatCurrency(yearToDateSummary?.totalCommission || 0)}
@@ -143,7 +143,7 @@ const FinancialDashboard = ({ jobId, jobDetails }) => {
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Paper elevation={2} sx={{ p: 2, height: '100%', bgcolor: '#f5f5f5' }}>
+            <Paper elevation={2} sx={{ p: 2, height: '100%', bgcolor: '#f5f5f5', borderRadius: 3 }}>
               <Typography variant="subtitle2" color="textSecondary">Net Profit</Typography>
               <Typography variant="h6" color="primary">
                 {formatCurrency(yearToDateSummary?.totalProfit || 0)}
@@ -155,7 +155,7 @@ const FinancialDashboard = ({ jobId, jobDetails }) => {
 
       {/* Monthly Trends Chart */}
       <Grid item xs={12}>
-        <Card variant="outlined">
+        <Card variant="outlined" sx={{ borderRadius: 3 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>Monthly Trends</Typography>
             <Box sx={{ height: 400, mt: 2 }}>
@@ -205,7 +205,7 @@ const FinancialDashboard = ({ jobId, jobDetails }) => {
 
       {/* Profit Breakdown Chart */}
       <Grid item xs={12}>
-        <Card variant="outlined">
+        <Card variant="outlined" sx={{ borderRadius: 3 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>Monthly Profit Breakdown</Typography>
             <Box sx={{ height: 400, mt: 2 }}>
